@@ -1,0 +1,23 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      java: corretto17
+  build:
+    commands:
+      - echo Build started on `date`
+      - mvn clean package -U deploy 
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Pushing the Jar to S3
+      - aws s3 cp target/*.jar s3://test-digi-acc/jars/
+      - echo Pushing the Jar to Jfrog
+      - curl -uaccelerator.jfrog@gmail.com:cmVmdGtuOjAxOjE3MDkzNTg0NDE6eXZydVcxSXpIeEhqcFdoaTVKalJxYXpub2I5 -T target/*.jar "https://digitalaccelerator.jfrog.io/artifactory/example-repo-local/"
+artifacts:
+  files:
+    - target/*.jar
+    - appspec.yml
+    - run.sh
+  discard-paths: yes
